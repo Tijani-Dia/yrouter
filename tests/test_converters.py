@@ -1,6 +1,6 @@
 import pytest
 
-from yrouter import REFUSED, AbstractConverter, NoMatch, Router, route
+from yrouter import REFUSED, AbstractConverter, NoMatch, Router, UnknownConverter, route
 from yrouter.converters import (
     ExactConverter,
     IntConverter,
@@ -107,6 +107,11 @@ def test_register_new_converter():
 
     assert router.match("not-magic/") is NoMatch
     discard_converter("custom")
+
+
+def test_unknown_converter():
+    with pytest.raises(UnknownConverter):
+        route("<lang>/<route:url>/")
 
 
 def test_hash_converter():

@@ -1,33 +1,17 @@
 import re
 from abc import ABC, abstractmethod
+from typing import Dict, Optional, Pattern, Tuple, Type
 
-REFUSED = (False, None)
-ACCEPTED_NO_KWARGS = (True, {})
-CONVERTERS = {}
-
-
-def get_converters():
-    return CONVERTERS
-
-
-def discard_converter(converter_name):
-    return CONVERTERS.pop(converter_name, None)
+REFUSED: Tuple[bool, dict] = (False, {})
+CONVERTERS: Dict[str, Type["AbstractConverter"]] = {}
 
 
 class AbstractConverter(ABC):
-    """
-    Abstract converter from which all converters must inherit.
-    """
+    """Abstract converter from which all converters must inherit."""
 
-    def __init_subclass__(cls, converter_name=None):
-        """Registers a new converter if `converter_name` is provided."""
+    name: Optional[str]
 
-        super().__init_subclass__()
-        if converter_name is not None:
-            CONVERTERS[converter_name] = cls
-            cls.name = converter_name
-
-    def __init__(self, description, identifier=None):
+    def __init__(self, description: str, identifier: str = None) -> None:
         self.description = description
         self.identifier = identifier
 
@@ -38,20 +22,22 @@ class AbstractConverter(ABC):
         return f"<{self.__class__.__name__}: description={self.description}; identifier={self.identifier}>"
 
     @abstractmethod
-    def accepts(self, value):
+    def accepts(self, value: str) -> Tuple[bool, dict]:
         """
         Checks if the value provided matches this converter's description.
-
-        Args:
-            value (str): Value to check.
-
-        Returns:
-            (bool, dict/None): bool is True if the value is accepted, in which case,
-                captured parameters, if any, will be available in dict.
-                False if the value is refused.
+        Returns `True` if the value is accepted, in which case, captured parameters,
+        if any, will be available in `dict`. Returns `REFUSED` else.
         """
 
         raise NotImplementedError
+
+    def __init_subclass__(cls, converter_name=None):
+        """Registers a new converter if `converter_name` is provided."""
+
+        super().__init_subclass__()
+        if converter_name is not None:
+            CONVERTERS[converter_name] = cls
+            cls.name = converter_name
 
 
 class ExactConverter(AbstractConverter):
@@ -62,11 +48,11 @@ class ExactConverter(AbstractConverter):
     >>> converter.accepts("match-me")
     (True, {})
     >>> converter.accepts("anything-else")
-    (False, None)
+    (False, {})
     """
 
-    def accepts(self, value):
-        return ACCEPTED_NO_KWARGS if value == self.description else REFUSED
+    def accepts(self, value: str) -> Tuple[bool, dict]:
+        return (True, {}) if value == self.description else REFUSED
 
 
 class IntConverter(AbstractConverter, converter_name="int"):
@@ -79,14 +65,14 @@ class IntConverter(AbstractConverter, converter_name="int"):
     >>> converter.accepts("0")
     (True, {'id': 0})
     >>> converter.accepts("1.0")
-    (False, None)
+    (False, {})
     >>> converter.accepts("-1")
-    (False, None)
+    (False, {})
     >>> converter.accepts("hello-world")
-    (False, None)
+    (False, {})
     """
 
-    def accepts(self, value):
+    def accepts(self, value: str) -> Tuple[bool, dict]:
         return (True, {self.identifier: int(value)}) if value.isdigit() else REFUSED
 
 
@@ -100,12 +86,12 @@ class StringConverter(AbstractConverter, converter_name="str"):
     >>> converter.accepts("ABC")
     (True, {'string': 'ABC'})
     >>> converter.accepts("1")
-    (False, None)
+    (False, {})
     >>> converter.accepts("hello-world")
-    (False, None)
+    (False, {})
     """
 
-    def accepts(self, value):
+    def accepts(self, value: str) -> Tuple[bool, dict]:
         return (True, {self.identifier: value}) if value.isalpha() else REFUSED
 
 
@@ -119,13 +105,21 @@ class RegexConverter(AbstractConverter, converter_name="re"):
     >>> converter.accepts("whatever")
     (True, {'match': 'whatever'})
     >>> converter.accepts("a-b")
-    (False, None)
+    (False, {})
     """
 
-    def __init__(self, description, identifier):
+    def __init__(self, description: str, identifier: str) -> None:
         super().__init__(description, identifier)
-        self.regex = re.compile(self.identifier)
+        self.regex: Pattern = re.compile(self.identifier)
 
-    def accepts(self, value):
+    def accepts(self, value: str) -> Tuple[bool, dict]:
         match = self.regex.match(value)
         return (True, match.groupdict()) if match else REFUSED
+
+
+def get_converters() -> Dict[str, Type[AbstractConverter]]:
+    return CONVERTERS
+
+
+def discard_converter(converter_name: str) -> Optional[Type[AbstractConverter]]:
+    return CONVERTERS.pop(converter_name, None)

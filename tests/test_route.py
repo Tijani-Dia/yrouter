@@ -8,7 +8,7 @@ def test_find_already_registered_name():
     name = "duplicate"
     router = Router(
         (
-            route("", name=name),
+            route("", lambda: None, name=name),
             route("duplicate/<int:id>/", handler, name=name),
         )
     )
