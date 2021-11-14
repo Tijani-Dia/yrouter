@@ -141,20 +141,19 @@ yrouter.exceptions.RouterConfigurationError: A node matching 'users' already exi
 
 # route & RouteNode
 
->>> route = route("authors/<int:id>/<str:title>/")
->>> node = route.tree
+>>> node = route("authors/<int:id>/<str:title>/")
 >>> node.display(0)
 authors/
     <int:id>/
         <str:title>/
 >>> node
-<RouteNode: converter=<ExactConverter: description=authors; identifier=None>; route=None; children=1>
+<RouteNode: converter=<ExactConverter: description=authors; identifier=None>; handler=None; children=1>
 >>> node = node.children[0]
 >>> node
-<RouteNode: converter=<IntConverter: description=<int:id>; identifier=id>; route=None; children=1>
+<RouteNode: converter=<IntConverter: description=<int:id>; identifier=id>; handler=None; children=1>
 >>> node = node.children[0]
 >>> node
-<RouteNode: converter=<StringConverter: description=<str:title>; identifier=title>; route=<Route: name=None>; children=0>
+<RouteNode: converter=<StringConverter: description=<str:title>; identifier=title>; handler=None; children=0>
 >>> node.children
 []
 """
@@ -165,6 +164,8 @@ from .match import NoMatch
 from .route import route
 from .router import Router
 
+__version__ = "1.0.0"
+
 __all__ = [
     "REFUSED",
     "AbstractConverter",
@@ -173,4 +174,5 @@ __all__ = [
     "NoMatch",
     "route",
     "Router",
+    "__version__",
 ]

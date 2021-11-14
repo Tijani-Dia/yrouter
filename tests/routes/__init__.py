@@ -1,4 +1,4 @@
-from tests.handlers import articles_handler, catchall, home_handler, users_handler
+from tests.handlers import articles_handler, catchall, home_handler
 from yrouter import route
 
 from .article_routes import routes as article_routes

@@ -1,33 +1,41 @@
-from functools import cached_property, lru_cache
+from functools import lru_cache
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from .constants import END_DESCRIPTION, PATH_DELIMITER, START_DESCRIPTION
-from .match import Match, NoMatch
+from .converters import AbstractConverter
+
+NONE_TUPLE = (None, None)
 
 
 class RouteNode:
-    def __init__(self, converter, route=None, children=None):
+    __slots__ = ("converter", "handler", "name", "children")
+
+    def __init__(
+        self,
+        converter: AbstractConverter,
+        handler: Optional[Callable[..., Any]] = None,
+        name: str = None,
+        children: Optional[List["RouteNode"]] = None,
+    ) -> None:
         self.converter = converter
-        self.route = route
+        self.handler = handler
+        self.name = name
         self.children = children if children else []
 
     @property
     def component(self):
         return self.converter.description
 
-    @cached_property
-    def can_match(self):
-        return bool(self.route and self.route.handler)
-
     @lru_cache
-    def match(self, path):
+    def match(self, path: str) -> Tuple[Optional["RouteNode"], Optional[Dict[str, Any]]]:
         for child in self.children:
             accepts, kwargs = child.converter.accepts(path)
             if accepts:
-                return Match(child, kwargs)
+                return (child, kwargs)
 
-        return NoMatch
+        return NONE_TUPLE
 
-    def find(self, handler_name, **kwargs):
+    def find(self, handler_name: str, **kwargs) -> Optional[str]:
         component, converter = self.component, self.converter
         if component.startswith(START_DESCRIPTION) and component.endswith(
             END_DESCRIPTION
@@ -35,11 +43,11 @@ class RouteNode:
 
             if converter.name in ["int", "str"]:
                 if (identifier := converter.identifier) not in kwargs:
-                    return
+                    return None
 
                 accepts, accepted = converter.accepts(str(kwargs[identifier]))
                 if not accepts:
-                    return
+                    return None
 
                 kwargs.pop(identifier)
                 component = str(accepted[identifier])
@@ -53,7 +61,7 @@ class RouteNode:
                         break
 
         matched = component + PATH_DELIMITER
-        if self.route and self.route.name == handler_name and not kwargs:
+        if self.handler and self.name == handler_name and not kwargs:
             return matched
 
         for child in self.children:
@@ -61,13 +69,15 @@ class RouteNode:
             if found:
                 return matched + found
 
+        return None
+
     def __str__(self):
         return f"{self.component}/"
 
     def __repr__(self):
-        return f"<RouteNode: converter={self.converter}; route={self.route}; children={len(self.children)}>"
+        return f"<RouteNode: converter={self.converter}; handler={self.handler}; children={len(self.children)}>"
 
-    def display(self, i):
+    def display(self, i: int) -> None:
         print(" " * 4 * i + str(self))
         for child in self.children:
             child.display(i + 1)

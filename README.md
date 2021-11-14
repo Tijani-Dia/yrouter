@@ -98,20 +98,19 @@ It behaves similarly to other routes however when keyword arguments are provided
 When the `router` builds up a tree out of `route` objects, it creates a `RouteNode` for each component in the `route` being described.
 
 ```python
->>> route = route("authors/<int:id>/<str:title>/")
->>> node = route.tree
+>>> node = route("authors/<int:id>/<str:title>/")
 >>> node.display(0)
 authors/
     <int:id>/
         <str:title>/
 >>> node
-<RouteNode: converter=<ExactConverter: description=authors; identifier=None>; route=None; children=1>
+<RouteNode: converter=<ExactConverter: description=authors; identifier=None>; handler=None; children=1>
 >>> node = node.children[0]
 >>> node
-<RouteNode: converter=<IntConverter: description=<int:id>; identifier=id>; route=None; children=1>
+<RouteNode: converter=<IntConverter: description=<int:id>; identifier=id>; handler=None; children=1>
 >>> node = node.children[0]
 >>> node
-<RouteNode: converter=<StringConverter: description=<str:title>; identifier=title>; route=<Route: name=None>; children=0>
+<RouteNode: converter=<StringConverter: description=<str:title>; identifier=title>; handler=None; children=0>
 >>> node.children
 []
 ```
@@ -148,7 +147,7 @@ A converter that matches an exact description.
 >>> converter.accepts("match-me")
 (True, {})
 >>> converter.accepts("anything-else")
-(False, None)
+(False, {})
 ```
 
 ### `IntConverter`
@@ -162,11 +161,11 @@ A converter that matches positive integers.
 >>> converter.accepts("0")
 (True, {'id': 0})
 >>> converter.accepts("1.0")
-(False, None)
+(False, {})
 >>> converter.accepts("-1")
-(False, None)
+(False, {})
 >>> converter.accepts("hello-world")
-(False, None)
+(False, {})
 ```
 
 ### `StringConverter`
@@ -180,9 +179,9 @@ A converter that only matches alphabetic characters.
 >>> converter.accepts("ABC")
 (True, {'string': 'ABC'})
 >>> converter.accepts("1")
-(False, None)
+(False, {})
 >>> converter.accepts("hello-world")
-(False, None)
+(False, {})
 ```
 
 ### `RegexConverter`
@@ -194,7 +193,7 @@ A converter that matches regular expressions.
 >>> converter.accepts("whatever")
 (True, {'match': 'whatever'})
 >>> converter.accepts("a-b")
-(False, None)
+(False, {})
 ```
 
 Since `yrouter` represent routes by delimiting them with the slash (`/`) character, a slash isn't allowed in regex identifiers!
@@ -223,7 +222,7 @@ This converter will only accept strings that are considered as valid identifiers
 >>> converter.accepts("valid_identifier")
 (True, {"identifier": "valid_identifier})
 >>> converter.accepts("invalid-identifier")
-(False, None)
+(False, {})
 ```
 
 To use your converter in a route:
@@ -281,7 +280,7 @@ The empty route equivalently matches the empty string "" and "/":
 <FullMatch: handler=index, kwargs={}, should_redirect=False>
 ```
 
-## Don't do this
+## Extra considerations
 
 ### Routes starting with the same prefix at the same level
 
@@ -310,7 +309,7 @@ Do this instead:
 )
 ```
 
-The `users:index` route will still be matched.
+The `users:index` route will still be matched, as long as it has a handler attached to it.
 
 ### Routes with similar names
 
@@ -343,17 +342,6 @@ The first `route` must be the empty `route` described by the empty string "" or 
 Traceback (most recent call last):
 ...
 yrouter.exceptions.RouterConfigurationError: First route must be '' or '/'.
-```
-
-### Initialize router with empty routes
-
-It is not allowed to initialize a `Router` with no routes:
-
-```python
->>> Router([])
-Traceback (most recent call last):
-...
-yrouter.exceptions.RouterConfigurationError: Trying to initialize router with empty routes.
 ```
 
 ## Integration with other libraries
