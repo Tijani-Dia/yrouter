@@ -45,5 +45,8 @@ class _NoMatch(Match):
     def __repr__(self):
         return "<NoMatch>"
 
+    def __bool__(self):
+        return False
+
 
 NoMatch = _NoMatch(None, None)

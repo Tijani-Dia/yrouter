@@ -68,13 +68,6 @@ def test_match_with_empty_handler(router):
     assert match is NoMatch
 
 
-def test_match_home_undifferently(router):
-    match = router.match("/")
-    assert match.handler_name == "home"
-    assert not match.should_redirect
-    assert match.redirect_to is None
-
-    match = router.match("")
-    assert match.handler_name == "home"
-    assert not match.should_redirect
-    assert match.redirect_to is None
+def test_match_bool(router):
+    assert router.match("/articles/2015/")
+    assert not router.match("/articles/year-2015/")
