@@ -356,6 +356,15 @@ Yrouter requires `Python>=3.9`. You can install it from Pypi:
 pip install yrouter
 ```
 
+## Running the tests
+
+`yrouter` has a mix of unit tests and doctests. You can run the test suite with `pytest`.
+
+```shell
+cd path/to/yrouter
+pytest
+```
+
 ## Benchmark
 
 You can find a comparison of `yrouter` and some other routing modules in [`yrouter-bench`](https://github.com/Tijani-Dia/yrouter-bench).
