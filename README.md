@@ -288,9 +288,9 @@ The tree structure of the routes assumes that each node's children is described 
 
 ```python
  >>> routes = (
-    route("", handler, name="home:index"),
-    route("users/", handler, name="users:index"),
-    route("users/<int:id>", handler, name="users:details"),
+    route("", handler, name="home"),
+    route("users/", handler, name="users"),
+    route("users/<int:id>", handler, name="users-details"),
 )
 >>> router = Router(routes)
 Traceback (most recent call last):
@@ -302,14 +302,14 @@ Do this instead:
 
 ```python
  >>> routes = (
-    route("", handler, name="home:index"),
-    route("users/", handler, name="users:index", subroutes = (
-        route("<int:id>", handler, name="users:details"),
+    route("", handler, name="home"),
+    route("users/", handler, name="users", subroutes = (
+        route("<int:id>", handler, name="users-details"),
     )),
 )
 ```
 
-The `users:index` route will still be matched, as long as it has a handler attached to it.
+The `users` route will still be matched, as long as it has a handler attached to it.
 
 ### Routes with similar names
 
