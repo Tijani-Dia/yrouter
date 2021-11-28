@@ -21,11 +21,17 @@ def test_initialize_router_with_empty_routes():
         Router([])
 
 
-def test_routes_without_empty_path():
-    routes = (route("home/"),)
-    expected = "First route must be '' or '/'."
-    with pytest.raises(RouterConfigurationError, match=expected):
-        Router(routes)
+def test_empty_route_inserted_for_routes_without_empty_path():
+    router = Router([route("home/", lambda: None, name="home")])
+
+    match = router.match("/home/")
+    assert match
+    assert match.handler_name == "home"
+    assert router.find("home") == "/home/"
+
+    # Empty route is inserted but won't match
+    assert not router.match("")
+    assert not router.match("/")
 
 
 def test_already_registered_path():

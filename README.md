@@ -333,15 +333,15 @@ You can distinguish routes from different modules by using the following techniq
 '/users/66/'
 ```
 
-### Set the first `route` of a router to anything other than the empty path
+### First `route` of a router different than the empty path
 
-The first `route` must be the empty `route` described by the empty string "" or "/":
+If the first route isn't the empty route described by the empty string `''` or `'/'`, `yrouter` will automatically create a route for it. It's needed as the root of the router's tree. The empty path won't be matched however:
 
 ```python
->>> Router((route("home/"),))
-Traceback (most recent call last):
-...
-yrouter.exceptions.RouterConfigurationError: First route must be '' or '/'.
+>>> router = Router([route("home/", handler, name="home")])
+>>> router.match("/home/")
+<FullMatch: handler=home, kwargs={}, should_redirect=False>
+>>> assert not (router.match("") or router.match("/"))
 ```
 
 ## Integration with other libraries

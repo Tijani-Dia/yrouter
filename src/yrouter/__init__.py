@@ -73,11 +73,12 @@ Traceback (most recent call last):
 ...
 yrouter.exceptions.RouterConfigurationError: Trying to initialize router with empty routes.
 
-Also, the first route must be the empty route described by the empty string "" or "/":
->>> Router((route("home/"),))
-Traceback (most recent call last):
-...
-yrouter.exceptions.RouterConfigurationError: First route must be '' or '/'.
+Also, if the first route isn't the empty route described by the empty string "" or "/", yrouter will
+automatically create a root node for the tree structure. the empty path won't be matched however:
+>>> some_router = Router([route("home/", handler, name="home")])
+>>> some_router.match("/home/")
+<FullMatch: handler=home, kwargs={}, should_redirect=False>
+>>> assert not (some_router.match("") or some_router.match("/"))
 
 With yrouter, you either choose if all your URLs have a trailing slash or
 if they all don't. This is important; you can't have, let's say `/users/66` and `users/66/`.

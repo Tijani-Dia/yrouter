@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional, Sequence
 from .constants import PATH_DELIMITER
 from .exceptions import RouterConfigurationError
 from .match import FullMatch, Match, NoMatch
-from .route import HANDLER_NAMES
+from .route import HANDLER_NAMES, route
 from .route_node import RouteNode
 from .utils import add_child_routes, get_components
 
@@ -14,13 +14,13 @@ class Router:
             raise RouterConfigurationError(
                 "Trying to initialize router with empty routes."
             )
-        if routes[0].converter.description != "":
-            raise RouterConfigurationError("First route must be '' or '/'.")
 
         self.tree = self._build_tree(routes)
         self.append_slash = append_slash
 
     def _build_tree(self, routes: Sequence[RouteNode]) -> RouteNode:
+        if routes[0].converter.description != "":
+            return add_child_routes(route(""), routes)
         return add_child_routes(routes[0], routes[1:])
 
     def match(self, path: str) -> Match:
