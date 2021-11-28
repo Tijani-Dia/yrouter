@@ -198,6 +198,18 @@ A converter that matches regular expressions.
 
 Since `yrouter` represent routes by delimiting them with the slash (`/`) character, a slash isn't allowed in regex identifiers!
 
+### `UUIDConverter`
+
+A converter that matches UUIDs.
+
+```python
+>>> converter = UUIDConverter(description="<uuid:uuid>", identifier="uuid_identifier")
+>>> converter.accepts("20bfa7b2-50a5-11ec-83dc-479fd603abba")
+(True, {'uuid_identifier': '20bfa7b2-50a5-11ec-83dc-479fd603abba'})
+>>> converter.accepts("1-2-3-4")
+(False, {})
+```
+
 ### Adding a converter
 
 You can easily add a new converter to `yrouter`.

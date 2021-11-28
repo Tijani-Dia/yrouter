@@ -56,6 +56,16 @@ def test_find_regex_no_kwargs(router):
     assert path == "/<re:(?P<catched>^[a-z]*$)>/catch/"
 
 
+def test_find_uuid(router):
+    uuid = "8fcc1854-50a8-11ec-83dc-479fd603abba"
+    path = router.find("items", id=uuid)
+    assert path == f"/items/{uuid}/"
+
+    assert router.find("items") is None
+    assert router.find("items", id=uuid[1:]) is None
+    assert router.find("items", id=uuid, foo="bar") is None
+
+
 def test_find_with_custom_converter():
     class Converter(AbstractConverter, converter_name="upper"):
         def accepts(self, value):

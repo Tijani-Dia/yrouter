@@ -6,6 +6,7 @@ from yrouter.converters import (
     IntConverter,
     RegexConverter,
     StringConverter,
+    UUIDConverter,
     discard_converter,
     get_converters,
 )
@@ -16,6 +17,7 @@ def test_get_register_discard_converters():
         "int": IntConverter,
         "str": StringConverter,
         "re": RegexConverter,
+        "uuid": UUIDConverter,
     }
 
     assert get_converters() == default_converters
@@ -77,6 +79,18 @@ def test_regex_converter():
     assert converter.accepts("") == REFUSED
     assert converter.accepts("1.0") == REFUSED
     assert converter.accepts("page-one") == REFUSED
+
+
+def test_uuid_converter():
+    uuid = "b473e2ca-50a5-11ec-83dc-479fd603abba"
+    converter = UUIDConverter("<uuid:uuid>", "uuid")
+    accepts, accepted = converter.accepts(uuid)
+
+    assert accepts
+    assert accepted == {"uuid": uuid}
+
+    assert converter.accepts("") == REFUSED
+    assert converter.accepts(uuid[:-1]) == REFUSED
 
 
 def test_register_new_converter_without_accepts_method():

@@ -1,4 +1,10 @@
-from tests.handlers import articles_handler, catchall, home_handler
+from tests.handlers import (
+    articles_handler,
+    catchall,
+    home_handler,
+    int_handler,
+    uuid_handler,
+)
 from yrouter import route
 
 from .article_routes import routes as article_routes
@@ -13,8 +19,9 @@ routes = (
         subroutes=article_routes,
     ),
     route("users/", name="users_routes", subroutes=user_routes),
+    route("int/<int:id>", int_handler, name="int"),
+    route("items/<uuid:id>", uuid_handler, name="items"),
     route("<re:(?P<catched>^[a-z]*$)>/catch/", catchall, name="catchall"),
-    route("int/<int:id>", home_handler, name="int"),
 )
 
 __all__ = ["routes"]

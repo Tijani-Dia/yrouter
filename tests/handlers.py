@@ -44,3 +44,11 @@ def year_handler():
 
 def popular_articles():
     pass
+
+
+def int_handler():
+    pass
+
+
+def uuid_handler():
+    pass

@@ -1,4 +1,5 @@
 import re
+import uuid
 from abc import ABC, abstractmethod
 from typing import Dict, Optional, Pattern, Tuple, Type
 
@@ -115,6 +116,24 @@ class RegexConverter(AbstractConverter, converter_name="re"):
     def accepts(self, value: str) -> Tuple[bool, dict]:
         match = self.regex.match(value)
         return (True, match.groupdict()) if match else REFUSED
+
+
+class UUIDConverter(AbstractConverter, converter_name="uuid"):
+    """
+    A converter that matches UUIDs.
+
+    >>> converter = UUIDConverter("<uuid:uuid>", "uuid")
+    >>> converter.accepts("20bfa7b2-50a5-11ec-83dc-479fd603abba")
+    (True, {'uuid': '20bfa7b2-50a5-11ec-83dc-479fd603abba'})
+    >>> converter.accepts("1-2-3-4")
+    (False, {})
+    """
+
+    def accepts(self, value: str) -> Tuple[bool, dict]:
+        try:
+            return (True, {self.identifier: str(uuid.UUID(value))})
+        except ValueError:
+            return REFUSED
 
 
 def get_converters() -> Dict[str, Type[AbstractConverter]]:
