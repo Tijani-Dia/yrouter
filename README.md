@@ -138,18 +138,6 @@ Here is what happens when we try to match `authors/23/some-title` against the ab
 
 The converters provided by default are:
 
-### `ExactConverter`
-
-A converter that matches an exact description.
-
-```python
->>> converter = ExactConverter(description="match-me")
->>> converter.accepts("match-me")
-(True, {})
->>> converter.accepts("anything-else")
-(False, {})
-```
-
 ### `IntConverter`
 
 A converter that matches positive integers.
