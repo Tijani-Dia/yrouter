@@ -26,8 +26,10 @@ class Router:
     def match(self, path: str) -> Match:
         node = self.tree
         kwargs: Dict[str, Any] = {}
+        is_home_path = bool(path == "" or path == PATH_DELIMITER)
+        components = [] if is_home_path else get_components(path)
 
-        for component in get_components(path):
+        for component in components:
             matched_node, partial_kwargs = node.match(component)
             if matched_node is None:
                 return NoMatch
@@ -41,7 +43,7 @@ class Router:
 
         should_redirect = False
         redirect_to = None
-        if path and path != PATH_DELIMITER:
+        if not is_home_path:
             if self.append_slash and path[-1] != PATH_DELIMITER:
                 redirect_to = path + PATH_DELIMITER
                 should_redirect = True

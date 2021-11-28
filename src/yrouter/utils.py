@@ -27,21 +27,12 @@ def add_child_routes(root: RouteNode, children: Sequence[RouteNode]) -> RouteNod
 
 
 def get_components(path: str) -> List[str]:
-    if not path:
-        return []
-    if path[0] == PATH_DELIMITER:
-        path = path[1:]
-    if path and path[-1] == PATH_DELIMITER:
-        path = path[:-1]
-
-    return path.split(PATH_DELIMITER) if path else []
+    return path.strip(PATH_DELIMITER).split(PATH_DELIMITER)
 
 
 def get_converter(description: str) -> AbstractConverter:
-    if (
-        description[0] == START_DESCRIPTION
-        and len(description) > 1
-        and description[-1] == END_DESCRIPTION
+    if description.startswith(START_DESCRIPTION) and description.endswith(
+        END_DESCRIPTION
     ):
         delimiter_index = description.find(DESCRIPTION_DELIMITER)
         if delimiter_index == -1:
