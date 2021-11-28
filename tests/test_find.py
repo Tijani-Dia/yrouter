@@ -1,3 +1,6 @@
+from yrouter import REFUSED, AbstractConverter, Router, route
+
+
 def test_find_int(router):
     path = router.find("int", id=5)
     assert path == "/int/5/"
@@ -51,3 +54,23 @@ def test_find_regex(router):
 def test_find_regex_no_kwargs(router):
     path = router.find("catchall")
     assert path == "/<re:(?P<catched>^[a-z]*$)>/catch/"
+
+
+def test_find_with_custom_converter():
+    class Converter(AbstractConverter, converter_name="upper"):
+        def accepts(self, value):
+            return (True, {"letter": value}) if value.isupper() else REFUSED
+
+    routes = [
+        route(""),
+        route("letters/<upper:letter>", lambda: None, name="letters"),
+    ]
+
+    router = Router(routes)
+
+    assert router.find("letters", letter="ALPHA") == "/letters/ALPHA/"
+    assert router.find("letters", letter="BETA") == "/letters/BETA/"
+
+    assert router.find("letters") is None
+    assert router.find("letters", letter="ALPHa") is None
+    assert router.find("letters", letter="ALPHA", word="word") is None

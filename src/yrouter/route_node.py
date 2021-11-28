@@ -41,7 +41,7 @@ class RouteNode:
             END_DESCRIPTION
         ):
 
-            if converter.name in ["int", "str"]:
+            if converter.name != "re":
                 if (identifier := converter.identifier) not in kwargs:
                     return None
 
@@ -53,11 +53,11 @@ class RouteNode:
                 component = str(accepted[identifier])
 
             else:
-                for k, v in kwargs.items():
-                    accepts, accepted = converter.accepts(str(v))
-                    if accepts and k in accepted:
-                        kwargs.pop(k)
-                        component = str(accepted[k])
+                for identifier, value in kwargs.items():
+                    accepts, accepted = converter.accepts(str(value))
+                    if accepts and identifier in accepted:
+                        kwargs.pop(identifier)
+                        component = str(accepted[identifier])
                         break
 
         matched = component + PATH_DELIMITER
