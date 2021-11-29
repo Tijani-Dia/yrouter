@@ -4,7 +4,7 @@ from .match import NoMatch
 from .route import route
 from .router import Router
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = [
     "REFUSED",
