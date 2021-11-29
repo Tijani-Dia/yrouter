@@ -1,3 +1,18 @@
+<p align="center">
+<a href="https://github.com/tijani-dia/yrouter/actions/workflows/test.yml">
+    <img src="https://github.com/tijani-dia/yrouter/actions/workflows/test.yml/badge.svg"/>
+</a>
+<a href="https://codecov.io/gh/Tijani-Dia/yrouter">
+    <img src="https://codecov.io/gh/Tijani-Dia/yrouter/branch/main/graph/badge.svg?token=MKJ71ZJE67"/>
+</a>
+<a href="https://pypi.org/project/yrouter/">
+    <img src="https://badge.fury.io/py/yrouter.svg" alt="Package version">
+</a>
+<a href="https://opensource.org/licenses/BSD-3-Clause">
+    <img src="https://img.shields.io/badge/license-BSD-blue.svg"/>
+</a>
+</p>
+
 # Yrouter
 
 Yrouter is a framework-agnostic URL routing package focused on simplicity and performance.
