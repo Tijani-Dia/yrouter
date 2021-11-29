@@ -32,16 +32,16 @@ class AbstractConverter(ABC):
 
         raise NotImplementedError
 
-    def __init_subclass__(cls, converter_name=None):
-        """Registers a new converter if `converter_name` is provided."""
+    def __init_subclass__(cls, converter_name):
+        """Registers a new converter."""
 
         super().__init_subclass__()
-        if converter_name is not None:
-            CONVERTERS[converter_name] = cls
-            cls.name = converter_name
+
+        CONVERTERS[converter_name] = cls
+        cls.name = converter_name
 
 
-class ExactConverter(AbstractConverter):
+class ExactConverter(AbstractConverter, converter_name="__exact__"):
     """
     A converter that matches an exact description.
 
@@ -134,6 +134,21 @@ class UUIDConverter(AbstractConverter, converter_name="uuid"):
             return (True, {self.identifier: str(uuid.UUID(value))})
         except ValueError:
             return REFUSED
+
+
+class PathConverter(AbstractConverter, converter_name="path"):
+    """
+    A converter that matches arbitrary paths.
+
+    >>> converter = PathConverter("<path:path>", "path")
+    >>> converter.accepts("path/a-slug/number_123.pdf")
+    (True, {'path': 'path/a-slug/number_123.pdf'})
+    >>> converter.accepts("")
+    (True, {'path': ''})
+    """
+
+    def accepts(self, value: str) -> Tuple[bool, dict]:
+        return (True, {self.identifier: value})
 
 
 def get_converters() -> Dict[str, Type[AbstractConverter]]:

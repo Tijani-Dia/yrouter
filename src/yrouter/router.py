@@ -36,7 +36,14 @@ class Router:
 
             node = matched_node
             if partial_kwargs:
-                kwargs |= partial_kwargs
+                if node.converter_name != "path":
+                    kwargs |= partial_kwargs
+                else:
+                    for key, value in partial_kwargs.items():
+                        if key in kwargs:
+                            kwargs[key] += f"/{value}"
+                        else:
+                            kwargs[key] = value
 
         if node.handler is None:
             return NoMatch

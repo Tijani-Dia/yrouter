@@ -4,6 +4,7 @@ from yrouter import REFUSED, AbstractConverter, NoMatch, Router, UnknownConverte
 from yrouter.converters import (
     ExactConverter,
     IntConverter,
+    PathConverter,
     RegexConverter,
     StringConverter,
     UUIDConverter,
@@ -14,10 +15,12 @@ from yrouter.converters import (
 
 def test_get_register_discard_converters():
     default_converters = {
+        "__exact__": ExactConverter,
         "int": IntConverter,
         "str": StringConverter,
         "re": RegexConverter,
         "uuid": UUIDConverter,
+        "path": PathConverter,
     }
 
     assert get_converters() == default_converters
@@ -129,7 +132,7 @@ def test_unknown_converter():
 
 
 def test_hash_converter():
-    class Converter(AbstractConverter):
+    class Converter(AbstractConverter, converter_name="__hash__"):
         def accepts(self, value):
             pass
 

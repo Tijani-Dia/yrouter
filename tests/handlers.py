@@ -50,5 +50,9 @@ def int_handler():
     pass
 
 
+def static_handler():
+    pass
+
+
 def uuid_handler():
     pass

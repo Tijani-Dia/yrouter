@@ -1,3 +1,5 @@
+import pytest
+
 from yrouter import NoMatch
 
 from . import handlers
@@ -78,6 +80,29 @@ def test_match_uuid(router):
     assert match.kwargs == {"id": uuid}
 
     assert not router.match(f"/items/{uuid[1:-1]}/")
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "images/original/hero.jpg",
+        "images/min/hero.jpg",
+        "svg/brand/logo.svg",
+    ],
+)
+def test_match_static(router, path):
+    match = router.match(f"/static/{path}/")
+    assert match.handler_name == "static"
+    assert match.handler == handlers.static_handler
+    assert match.kwargs == {"path": path}
+
+
+def test_match_after_path(router):
+    match = router.match("path/a/b2/c-d/3")
+    assert match.handler_name == "path-id"
+    assert match.kwargs == {"path": "a/b2/c-d", "id": 3}
+
+    assert not router.match("path/a/b/c/d/")
 
 
 def test_match_with_empty_handler(router):

@@ -22,6 +22,8 @@ def route(
     for component in components[1:]:
         child = RouteNode(get_converter(component))
         node.children.append(child)
+        if node.converter_name == "path":
+            node.finalize()
         node = child
 
     node.handler = handler
@@ -31,5 +33,8 @@ def route(
 
     if subroutes:
         add_child_routes(node, subroutes)
+
+    if node.converter_name == "path":
+        node.finalize()
 
     return root

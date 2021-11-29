@@ -66,6 +66,20 @@ def test_find_uuid(router):
     assert router.find("items", id=uuid, foo="bar") is None
 
 
+def test_find_static(router):
+    img_path = "images/original/hero.jpg"
+    path = router.find("static", path=img_path)
+    assert path == f"/static/{img_path}/"
+
+    assert router.find("static") is None
+    assert router.find("static", path=img_path, foo=1) is None
+
+
+def test_find_after_path(router):
+    path = router.find("path-id", path="folders/new", id=1)
+    assert path == "/path/folders/new/1/"
+
+
 def test_find_with_custom_converter():
     class Converter(AbstractConverter, converter_name="upper"):
         def accepts(self, value):

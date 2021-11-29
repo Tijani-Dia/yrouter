@@ -3,6 +3,7 @@ from tests.handlers import (
     catchall,
     home_handler,
     int_handler,
+    static_handler,
     uuid_handler,
 )
 from yrouter import route
@@ -21,6 +22,8 @@ routes = (
     route("users/", name="users_routes", subroutes=user_routes),
     route("int/<int:id>", int_handler, name="int"),
     route("items/<uuid:id>", uuid_handler, name="items"),
+    route("static/<path:path>", static_handler, name="static"),
+    route("path/<path:path>/<int:id>/", lambda: None, name="path-id"),
     route("<re:(?P<catched>^[a-z]*$)>/catch/", catchall, name="catchall"),
 )
 

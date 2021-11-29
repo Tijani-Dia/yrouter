@@ -198,6 +198,18 @@ A converter that matches UUIDs.
 (False, {})
 ```
 
+### `PathConverter`
+
+A converter that matches arbitrary paths.
+
+```python
+>>> converter = PathConverter(description="<path:path>", identifier="path")
+>>> converter.accepts("images/original/hero.jpg")
+(True, {'path': 'images/original/hero.jpg'})
+>>> converter.accepts("1-2/three/_4")
+(True, {'path': '1-2/three/_4'})
+```
+
 ### Adding a converter
 
 You can easily add a new converter to `yrouter`.

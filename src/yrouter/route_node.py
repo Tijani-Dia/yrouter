@@ -8,7 +8,7 @@ NONE_TUPLE = (None, None)
 
 
 class RouteNode:
-    __slots__ = ("converter", "handler", "name", "children")
+    __slots__ = ("converter", "converter_name", "handler", "name", "children")
 
     def __init__(
         self,
@@ -18,6 +18,7 @@ class RouteNode:
         children: Optional[List["RouteNode"]] = None,
     ) -> None:
         self.converter = converter
+        self.converter_name = converter.name
         self.handler = handler
         self.name = name
         self.children = children if children else []
@@ -41,7 +42,7 @@ class RouteNode:
             END_DESCRIPTION
         ):
 
-            if converter.name != "re":
+            if self.converter_name != "re":
                 if (identifier := converter.identifier) not in kwargs:
                     return None
 
@@ -70,6 +71,13 @@ class RouteNode:
                 return matched + found
 
         return None
+
+    def finalize(self):
+        assert (
+            self.converter_name == "path"
+        ), "Only routes with `path` converters are allowed to be recursive."
+
+        self.children.append(self)
 
     def __str__(self):
         return f"{self.component}/"
