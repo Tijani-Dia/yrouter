@@ -1,0 +1,51 @@
+name: Yrouter CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.toxenv }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: |
+          pip install -e '.[test]'
+      - name: Test
+        run: |
+          pytest
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: |
+          pip install -e '.[test]'
+      - name: Test
+        run: |
+          pytest --cov=yrouter
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true

@@ -11,6 +11,7 @@ test_requires = [
     "isort",
     "flake8",
     "pytest",
+    "pytest-cov",
 ]
 
 build_requires = [
