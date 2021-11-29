@@ -151,6 +151,28 @@ class PathConverter(AbstractConverter, converter_name="path"):
         return (True, {self.identifier: value})
 
 
+class SlugConverter(AbstractConverter, converter_name="slug"):
+    """
+    A converter that matches slugs.
+
+    >>> converter = SlugConverter("<slug:slug>", "slug")
+    >>> converter.accepts("a-slug")
+    (True, {'slug': 'a-slug'})
+    >>> converter.accepts("1-random_slug")
+    (True, {'slug': '1-random_slug'})
+    >>> converter.accepts("hello")
+    (True, {'slug': 'hello'})
+    >>> converter.accepts("hi@hi")
+    (True, {'slug': 'hi@hi'})
+    """
+
+    slug_regex = re.compile(r"[-a-zA-Z0-9_]+")
+
+    def accepts(self, value: str) -> Tuple[bool, dict]:
+        match = SlugConverter.slug_regex.match(value)
+        return (True, {self.identifier: value}) if match else REFUSED
+
+
 def get_converters() -> Dict[str, Type[AbstractConverter]]:
     return CONVERTERS
 

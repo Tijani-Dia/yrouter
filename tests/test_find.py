@@ -56,6 +56,14 @@ def test_find_regex_no_kwargs(router):
     assert path == "/<re:(?P<catched>^[a-z]*$)>/catch/"
 
 
+def test_find_slug(router):
+    path = router.find("users-slug", slug="user-123")
+    assert path == "/users/user-123/"
+
+    assert router.find("users-slug") is None
+    assert router.find("users-slug", slug="user-123", foo="bar") is None
+
+
 def test_find_uuid(router):
     uuid = "8fcc1854-50a8-11ec-83dc-479fd603abba"
     path = router.find("items", id=uuid)

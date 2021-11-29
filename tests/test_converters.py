@@ -6,6 +6,7 @@ from yrouter.converters import (
     IntConverter,
     PathConverter,
     RegexConverter,
+    SlugConverter,
     StringConverter,
     UUIDConverter,
     discard_converter,
@@ -21,6 +22,7 @@ def test_get_register_discard_converters():
         "re": RegexConverter,
         "uuid": UUIDConverter,
         "path": PathConverter,
+        "slug": SlugConverter,
     }
 
     assert get_converters() == default_converters

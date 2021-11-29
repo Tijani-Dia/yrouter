@@ -13,7 +13,7 @@ Let's see an example:
         )),\
         route("articles", subroutes = (\
             route("<str:category>", handler, name="category"),\
-            route("<re:(?P<title>^[a-z0-9]+(?:-[a-z0-9]+)*)$>", handler, name="article"),\
+            route("<slug:title>", handler, name="article"),\
         )),\
     )
 >>> router = Router(routes)
@@ -23,7 +23,7 @@ Let's see an example:
         <int:id>/
     articles/
         <str:category>/
-        <re:(?P<title>^[a-z0-9]+(?:-[a-z0-9]+)*)$>/
+        <slug:title>/
 
 We can now match URL paths against our router.
 >>> router.match("/")
@@ -59,13 +59,7 @@ the route being searched, the find method returns None.
 
 There is an exception for routes with regex converters that will return the initial route 
 if no keyword arguments is provided:
->>> router.find("article")
-'/articles/<re:(?P<title>^[a-z0-9]+(?:-[a-z0-9]+)*)$>/'
 
-But it behaves similarly to other routes when keyword arguments are provided:
->>> router.find("article", title="hello-world")
-'/articles/hello-world/'
->>> router.find("article", title="hello-world", foo="bar")
 
 It is not allowed to initialize a Router with no routes:
 >>> Router([])

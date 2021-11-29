@@ -62,7 +62,7 @@ def test_match_with_slug(router):
     match = router.match("/users/slug-123/")
     assert match.handler_name == "users-slug"
     assert match.handler == handlers.home_handler
-    assert match.kwargs == {}
+    assert match.kwargs == {"slug": "slug-123"}
 
 
 def test_match_after_regex(router):

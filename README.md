@@ -20,7 +20,7 @@ Let's see an example:
         )),
         route("articles", subroutes = (
             route("<str:category>", handler, name="category"),
-            route("<re:(?P<title>^[a-z0-9]+(?:-[a-z0-9]+)*)$>", handler, name="article"),
+            route("<slug:title>", handler, name="article"),
         )),
     )
 >>> router = Router(routes)
@@ -30,7 +30,7 @@ Let's see an example:
         <int:id>/
     articles/
         <str:category>/
-        <re:(?P<title>^[a-z0-9]+(?:-[a-z0-9]+)*)$>/
+        <slug:title>/
 ```
 
 ### Matching a handler given a path
@@ -78,20 +78,7 @@ If given an invalid handler name or missing/extra keywords arguments for the rou
 >>> router.find("category", category="tech", foo="bar")
 ```
 
-There is an exception for routes with regex converters that will return the initial path if no keyword arguments is provided:
-
-```python
->>> router.find("article")
-'/articles/<re:(?P<title>^[a-z0-9]+(?:-[a-z0-9]+)*)$>/'
-```
-
-They behave similarly to other routes however when keyword arguments are provided:
-
-```python
->>> router.find("article", title="hello-world")
-'/articles/hello-world/'
->>> router.find("article", title="hello-world", foo="bar")
-```
+There is an exception for routes with regex converters that will return the initial path if no keyword arguments is provided. They behave similarly to other routes however when keyword arguments are provided.
 
 ## `RouteNode` and `route`
 
@@ -172,19 +159,21 @@ A converter that only matches alphabetic characters.
 (False, {})
 ```
 
-### `RegexConverter`
+### `SlugConverter`
 
-A converter that matches regular expressions.
+A converter that matches slugs.
 
 ```python
->>> converter = RegexConverter("<re:(?P<match>^[a-z]*$)>", "(?P<match>^[a-z]*$)")
->>> converter.accepts("whatever")
-(True, {'match': 'whatever'})
->>> converter.accepts("a-b")
-(False, {})
+>>> converter = SlugConverter("<slug:slug>", "slug")
+>>> converter.accepts("a-slug")
+(True, {'slug': 'a-slug'})
+>>> converter.accepts("1-random_slug")
+(True, {'slug': '1-random_slug'})
+>>> converter.accepts("hello")
+(True, {'slug': 'hello'})
+>>> converter.accepts("hi@hi")
+(True, {'slug': 'hi@hi'})
 ```
-
-Since `yrouter` represent routes by delimiting them with the slash (`/`) character, a slash isn't allowed in regex identifiers!
 
 ### `UUIDConverter`
 
@@ -209,6 +198,20 @@ A converter that matches arbitrary paths.
 >>> converter.accepts("1-2/three/_4")
 (True, {'path': '1-2/three/_4'})
 ```
+
+### `RegexConverter`
+
+A converter that matches regular expressions.
+
+```python
+>>> converter = RegexConverter("<re:(?P<match>^[a-z]*$)>", "(?P<match>^[a-z]*$)")
+>>> converter.accepts("whatever")
+(True, {'match': 'whatever'})
+>>> converter.accepts("a-b")
+(False, {})
+```
+
+Since `yrouter` represent routes by delimiting them with the slash (`/`) character, a slash isn't allowed in regex identifiers!
 
 ### Adding a converter
 
