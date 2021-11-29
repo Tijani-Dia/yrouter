@@ -38,7 +38,9 @@ def get_converter(description: str) -> AbstractConverter:
         if delimiter_index == -1:
             return ExactConverter(description)
 
-        if (_type := description[1:delimiter_index]) in (CONVERTERS := get_converters()):
+        if (_type := description[1:delimiter_index]) in (
+            CONVERTERS := get_converters()
+        ):
             converter_class = CONVERTERS[_type]
             return converter_class(description, description[delimiter_index + 1 : -1])
         else:

@@ -282,7 +282,7 @@ It also works when we try to find the path for a given handler name:
 '/articles/business'
 ```
 
-The empty route equivalently matches the empty string "" and "/":
+The empty route equivalently matches the empty string `''` and `/`:
 
 ```python
 >>> router.match("")

@@ -7,6 +7,9 @@ omit = */tests/*
 # Regexes for lines to exclude from consideration
 exclude_lines =
     pragma: no cover
+    __repr__
+    __str__
+    def display
 
     raise NotImplementedError
 

@@ -28,7 +28,9 @@ class RouteNode:
         return self.converter.description
 
     @lru_cache
-    def match(self, path: str) -> Tuple[Optional["RouteNode"], Optional[Dict[str, Any]]]:
+    def match(
+        self, path: str
+    ) -> Tuple[Optional["RouteNode"], Optional[Dict[str, Any]]]:
         for child in self.children:
             accepts, kwargs = child.converter.accepts(path)
             if accepts:
@@ -83,7 +85,10 @@ class RouteNode:
         return f"{self.component}/"
 
     def __repr__(self):
-        return f"<RouteNode: converter={self.converter}; handler={self.handler}; children={len(self.children)}>"
+        return (
+            f"<RouteNode: converter={self.converter}; "
+            f"handler={self.handler}; children={len(self.children)}>"
+        )
 
     def display(self, i: int) -> None:
         print(" " * 4 * i + str(self))
